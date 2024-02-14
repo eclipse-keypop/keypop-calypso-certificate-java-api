@@ -10,9 +10,17 @@
 package org.eclipse.keypop.calypso.certificate.ca;
 
 /**
- * Settings for a CA certificate. It is used in conjunction with the CaCertificateManager class for
- * managing and creating certificates .
+ * A Calypso CA certificate version 1.
  *
  * @since 0.1.0
  */
-public interface CaCertificateSettings {}
+public interface CalypsoCaCertificateV1 {
+
+  /**
+   * Returns a byte array corresponding to the certificate as it is stored in the card.
+   *
+   * @return A 384-byte byte array.
+   * @since 0.1.0
+   */
+  byte[] getRawData();
+}

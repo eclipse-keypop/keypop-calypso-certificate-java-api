@@ -13,11 +13,11 @@ package org.eclipse.keypop.calypso.certificate.ca.spi;
  * Signer for a Calypso CA certificate.
  *
  * <p>Implementations of this interface provide the cryptographic signing functionality used to
- * generate signed CA certificates.
+ * generate signed Calypso CA certificates.
  *
  * @since 0.1.0
  */
-public interface CaCertificateSignerSpi {
+public interface CalypsoCaCertificateSignerSpi {
 
   /**
    * Gets the reference to the issuer's public key.

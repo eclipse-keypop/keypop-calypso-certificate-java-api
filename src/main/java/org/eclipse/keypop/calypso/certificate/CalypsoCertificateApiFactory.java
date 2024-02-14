@@ -9,56 +9,29 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate;
 
-import org.eclipse.keypop.calypso.certificate.ca.CaCertificateManager;
-import org.eclipse.keypop.calypso.certificate.ca.CaCertificateSettings;
-import org.eclipse.keypop.calypso.certificate.card.CardCertificateManager;
-import org.eclipse.keypop.calypso.certificate.card.CardCertificateSettings;
+import org.eclipse.keypop.calypso.certificate.ca.CalypsoCaCertificateV1Builder;
+import org.eclipse.keypop.calypso.certificate.card.CalypsoCardCertificateV1Builder;
 
 /**
- * Factory of {@link CaCertificateSettings}, {@link CaCertificateManager}, {@link
- * CardCertificateSettings} and {@link CardCertificateManager}.
+ * Factory of CA and card certificate builders.
  *
  * @since 0.1.0
  */
 public interface CalypsoCertificateApiFactory {
 
   /**
-   * Returns a new instance of the specified CA certificate settings class.
+   * Returns a builder of Calypso CA certificate version 1.
    *
-   * @param <T> The type of the lowest level child object.
-   * @param classOfT The `Class` object of the desired CA certificate settings type. This type must
-   *     extend {@link CaCertificateSettings}.
    * @return A non-null reference.
    * @since 0.1.0
    */
-  <T extends CaCertificateSettings> T createCaCertificateSettings(Class<T> classOfT);
+  CalypsoCaCertificateV1Builder createCalypsoCaCertificateV1Builder();
 
   /**
-   * Returns a new instance of the specified card certificate settings class.
+   * Returns a builder of Calypso card certificate version 1.
    *
-   * @param <T> The type of the lowest level child object.
-   * @param classOfT The `Class` object of the desired card certificate settings type. This type
-   *     must extend {@link CardCertificateSettings}.
    * @return A non-null reference.
    * @since 0.1.0
    */
-  <T extends CardCertificateSettings> T createCardCertificateSettings(Class<T> classOfT);
-
-  /**
-   * Returns a new instance of {@link CaCertificateManager}.
-   *
-   * @param settings The CA certificate settings to use.
-   * @return A non-null reference.
-   * @since 0.1.0
-   */
-  CaCertificateManager createCaCertificateManager(CaCertificateSettings settings);
-
-  /**
-   * Returns a new instance of {@link CardCertificateManager}.
-   *
-   * @param settings The card certificate settings to use.
-   * @return A non-null reference.
-   * @since 0.1.0
-   */
-  CardCertificateManager createCardCertificateManager(CardCertificateSettings settings);
+  CalypsoCardCertificateV1Builder createCalypsoCardCertificateV1Builder();
 }

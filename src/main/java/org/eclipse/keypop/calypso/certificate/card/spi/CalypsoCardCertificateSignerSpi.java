@@ -13,11 +13,11 @@ package org.eclipse.keypop.calypso.certificate.card.spi;
  * Signer for a Calypso card certificate.
  *
  * <p>Implementations of this interface provide the cryptographic signing functionality used to
- * generate signed card certificates.
+ * generate signed Calypso card certificates.
  *
  * @since 0.1.0
  */
-public interface CardCertificateSignerSpi {
+public interface CalypsoCardCertificateSignerSpi {
 
   /**
    * Gets the reference to the issuer's public key.

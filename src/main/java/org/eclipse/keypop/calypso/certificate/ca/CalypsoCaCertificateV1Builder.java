@@ -11,15 +11,14 @@ package org.eclipse.keypop.calypso.certificate.ca;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import org.eclipse.keypop.calypso.certificate.ca.spi.CaCertificateSignerSpi;
+import org.eclipse.keypop.calypso.certificate.ca.spi.CalypsoCaCertificateSignerSpi;
 
 /**
- * Extends {@link CaCertificateSettings} to manage and generate CA certificates, conforming to
- * version 1 of the CA certificate format.
+ * Builds CA certificates conforming to version 1 of the Calypso CA certificate format.
  *
  * @since 0.1.0
  */
-public interface CaCertificateSettingsV1 extends CaCertificateSettings {
+public interface CalypsoCaCertificateV1Builder {
   /**
    * Sets the external signer to be used for generating signed CA certificates.
    *
@@ -31,7 +30,8 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    *     #useInternalSigner(PrivateKey, byte[])}.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 useExternalSigner(CaCertificateSignerSpi caCertificateSigner);
+  CalypsoCaCertificateV1Builder useExternalSigner(
+      CalypsoCaCertificateSignerSpi caCertificateSigner);
 
   /**
    * Configures the settings to use the internal signer for generating signed CA certificates.
@@ -46,10 +46,10 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    * @throws IllegalArgumentException If any of the provided arguments are null, invalid, or have
    *     incompatible formats.
    * @throws IllegalStateException If an external signer has already been set using {@link
-   *     #useExternalSigner(CaCertificateSignerSpi)}.
+   *     #useExternalSigner(CalypsoCaCertificateSignerSpi)}.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 useInternalSigner(
+  CalypsoCaCertificateV1Builder useInternalSigner(
       PrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
 
   /**
@@ -66,7 +66,7 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    * @throws IllegalArgumentException If one of the provided argument is null or invalid.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setCaPublicKey(PublicKey caPublicKey, byte[] caPublicKeyReference);
+  CalypsoCaCertificateV1Builder setCaPublicKey(PublicKey caPublicKey, byte[] caPublicKeyReference);
 
   /**
    * Sets the validity period of the certificate's public key. This defines the timeframe when the
@@ -84,7 +84,7 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setValidityPeriod(
+  CalypsoCaCertificateV1Builder setValidityPeriod(
       int startDateYear,
       int startDateMonth,
       int startDateDay,
@@ -103,7 +103,7 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setAid(byte[] aid);
+  CalypsoCaCertificateV1Builder setAid(byte[] aid);
 
   /**
    * Sets the CA rights for this card certificate, controlling which types of certificates the card
@@ -137,7 +137,7 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    *     non-zero values in reserved bits.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setCaRights(byte caRights);
+  CalypsoCaCertificateV1Builder setCaRights(byte caRights);
 
   /**
    * Sets the CA scope for this card certificate, defining the context in which the CA key pair can
@@ -161,7 +161,7 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    *     non-standard or reserved values.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setCaScope(byte caScope);
+  CalypsoCaCertificateV1Builder setCaScope(byte caScope);
 
   /**
    * Sets the CA operating mode, controlling how the target Calypso Prime PKI application AID should
@@ -202,5 +202,12 @@ public interface CaCertificateSettingsV1 extends CaCertificateSettings {
    *     non-zero values in reserved bits.
    * @since 0.1.0
    */
-  CaCertificateSettingsV1 setCaOperatingMode(byte caOperatingMode);
+  CalypsoCaCertificateV1Builder setCaOperatingMode(byte caOperatingMode);
+
+  /**
+   * TODO
+   *
+   * @return
+   */
+  CalypsoCaCertificateV1 build();
 }

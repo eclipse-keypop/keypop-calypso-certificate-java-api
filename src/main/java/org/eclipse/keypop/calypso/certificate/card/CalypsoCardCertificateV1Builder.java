@@ -10,15 +10,14 @@
 package org.eclipse.keypop.calypso.certificate.card;
 
 import java.security.PrivateKey;
-import org.eclipse.keypop.calypso.certificate.card.spi.CardCertificateSignerSpi;
+import org.eclipse.keypop.calypso.certificate.card.spi.CalypsoCardCertificateSignerSpi;
 
 /**
- * Extends {@link CardCertificateSettings} to manage and generate card certificates, conforming to
- * version 1 of the card certificate format.
+ * Builds a card certificate conforming to version 1 of the Calypso card certificate format.
  *
  * @since 0.1.0
  */
-public interface CardCertificateSettingsV1 extends CardCertificateSettings {
+public interface CalypsoCardCertificateV1Builder {
 
   /**
    * Sets the external signer to be used for generating signed card certificates.
@@ -31,7 +30,8 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    *     #useInternalSigner(PrivateKey, byte[])}.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 useExternalSigner(CardCertificateSignerSpi cardCertificateSigner);
+  CalypsoCardCertificateV1Builder useExternalSigner(
+      CalypsoCardCertificateSignerSpi cardCertificateSigner);
 
   /**
    * Configures the settings to use the internal signer for generating signed card certificates.
@@ -46,10 +46,10 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If any of the provided arguments are null, invalid, or have
    *     incompatible formats.
    * @throws IllegalStateException If an external signer has already been set using {@link
-   *     #useExternalSigner(CardCertificateSignerSpi)}.
+   *     #useExternalSigner(CalypsoCardCertificateSignerSpi)}.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 useInternalSigner(
+  CalypsoCardCertificateV1Builder useInternalSigner(
       PrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
 
   /**
@@ -64,7 +64,7 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If the provided key is null or has an invalid length (not 64).
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setCardPublicKey(byte[] cardPublicKey);
+  CalypsoCardCertificateV1Builder setCardPublicKey(byte[] cardPublicKey);
 
   /**
    * Sets the validity period of the certificate's public key. This defines the timeframe when the
@@ -82,7 +82,7 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setValidityPeriod(
+  CalypsoCardCertificateV1Builder setValidityPeriod(
       int startDateYear,
       int startDateMonth,
       int startDateDay,
@@ -98,7 +98,7 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setAid(byte[] aid);
+  CalypsoCardCertificateV1Builder setAid(byte[] aid);
 
   /**
    * Sets the serial number of the card for which the certificate is being generated.
@@ -108,7 +108,7 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setCardSerialNumber(byte[] serialNumber);
+  CalypsoCardCertificateV1Builder setCardSerialNumber(byte[] serialNumber);
 
   /**
    * Sets the startup info for the card certificate.
@@ -119,7 +119,7 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setCardStartupInfo(byte[] startupInfo);
+  CalypsoCardCertificateV1Builder setCardStartupInfo(byte[] startupInfo);
 
   /**
    * Sets the index used to differentiate two card certificates generated with the same issuer
@@ -129,5 +129,12 @@ public interface CardCertificateSettingsV1 extends CardCertificateSettings {
    * @return The current instance.
    * @since 0.1.0
    */
-  CardCertificateSettingsV1 setIndex(int index);
+  CalypsoCardCertificateV1Builder setIndex(int index);
+
+  /**
+   * TODO
+   *
+   * @return
+   */
+  CalypsoCardCertificateV1 build();
 }

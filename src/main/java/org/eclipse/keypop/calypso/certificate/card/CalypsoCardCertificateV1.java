@@ -10,25 +10,17 @@
 package org.eclipse.keypop.calypso.certificate.card;
 
 /**
- * Provides methods to create a card certificate and get the associated card public key.
+ * A Calypso card certificate version 1.
  *
  * @since 0.1.0
  */
-public interface CardCertificateManager {
+public interface CalypsoCardCertificateV1 {
 
   /**
-   * Based on provided settings, generates the certificate data to be stored in a card.
+   * Returns a byte array corresponding to the certificate as it is stored in the card.
    *
-   * @return A 384-byte byte array.
+   * @return A 316-byte byte array.
    * @since 0.1.0
    */
-  byte[] createCertificate();
-
-  /**
-   * Based on provided settings, extracts the public key data.
-   *
-   * @return A 64-byte byte array.
-   * @since 0.1.0
-   */
-  byte[] getCardPublicKeyData();
+  byte[] getRawData();
 }
