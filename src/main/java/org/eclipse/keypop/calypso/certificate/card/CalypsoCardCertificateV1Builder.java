@@ -10,6 +10,8 @@
 package org.eclipse.keypop.calypso.certificate.card;
 
 import java.security.PrivateKey;
+import java.security.interfaces.RSAPrivateKey;
+
 import org.eclipse.keypop.calypso.certificate.card.spi.CalypsoCardCertificateSignerSpi;
 
 /**
@@ -24,17 +26,16 @@ public interface CalypsoCardCertificateV1Builder {
    *
    * @param cardCertificateSigner The external signer for card certificate generation.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided signer is null, invalid, or not compatible
-   *     with the required signature formats.
+   * @throws IllegalArgumentException If the provided signer is null.
    * @throws IllegalStateException If an internal signer has already been configured using {@link
-   *     #useInternalSigner(PrivateKey, byte[])}.
+   *     #useInternalSigner(RSAPrivateKey, byte[])}.
    * @since 0.1.0
    */
   CalypsoCardCertificateV1Builder useExternalSigner(
       CalypsoCardCertificateSignerSpi cardCertificateSigner);
 
   /**
-   * Configures the settings to use the internal signer for generating signed card certificates.
+   * Configures the builder to use the internal signer for generating signed card certificates.
    *
    * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
    * of 65537 and the specified public key reference for signing operations.
@@ -50,7 +51,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @since 0.1.0
    */
   CalypsoCardCertificateV1Builder useInternalSigner(
-      PrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
+          RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
 
   /**
    * Sets the public key of the card, provided as a 64-byte raw array.

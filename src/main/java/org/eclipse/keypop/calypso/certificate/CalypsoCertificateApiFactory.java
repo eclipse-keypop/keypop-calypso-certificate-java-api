@@ -20,7 +20,7 @@ import org.eclipse.keypop.calypso.certificate.card.CalypsoCardCertificateV1Build
 public interface CalypsoCertificateApiFactory {
 
   /**
-   * Returns a builder of Calypso CA certificate version 1.
+   * Returns a new builder of Calypso CA certificate version 1.
    *
    * @return A non-null reference.
    * @since 0.1.0
@@ -28,7 +28,7 @@ public interface CalypsoCertificateApiFactory {
   CalypsoCaCertificateV1Builder createCalypsoCaCertificateV1Builder();
 
   /**
-   * Returns a builder of Calypso card certificate version 1.
+   * Returns a new builder of Calypso card certificate version 1.
    *
    * @return A non-null reference.
    * @since 0.1.0

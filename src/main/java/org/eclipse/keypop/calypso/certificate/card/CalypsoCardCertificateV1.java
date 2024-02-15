@@ -14,7 +14,7 @@ package org.eclipse.keypop.calypso.certificate.card;
  *
  * @since 0.1.0
  */
-public interface CalypsoCardCertificateV1 {
+public interface CalypsoCardCertificateV1 extends CardCertificate {
 
   /**
    * Returns a byte array corresponding to the certificate as it is stored in the card.

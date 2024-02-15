@@ -11,6 +11,9 @@ package org.eclipse.keypop.calypso.certificate.ca;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
 import org.eclipse.keypop.calypso.certificate.ca.spi.CalypsoCaCertificateSignerSpi;
 
 /**
@@ -24,17 +27,16 @@ public interface CalypsoCaCertificateV1Builder {
    *
    * @param caCertificateSigner The external signer for ca certificate generation.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided signer is null, invalid, or not compatible
-   *     with the required signature formats.
+   * @throws IllegalArgumentException If the provided signer is null.
    * @throws IllegalStateException If an internal signer has already been configured using {@link
-   *     #useInternalSigner(PrivateKey, byte[])}.
+   *     #useInternalSigner(RSAPrivateKey, byte[])}.
    * @since 0.1.0
    */
   CalypsoCaCertificateV1Builder useExternalSigner(
       CalypsoCaCertificateSignerSpi caCertificateSigner);
 
   /**
-   * Configures the settings to use the internal signer for generating signed CA certificates.
+   * Configures the builder to use the internal signer for generating signed CA certificates.
    *
    * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
    * of 65537 and the specified public key reference for signing operations.
@@ -50,7 +52,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @since 0.1.0
    */
   CalypsoCaCertificateV1Builder useInternalSigner(
-      PrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
+          RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
 
   /**
    * Sets the public key of the CA, provided as a 64-byte raw array.
@@ -66,7 +68,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If one of the provided argument is null or invalid.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setCaPublicKey(PublicKey caPublicKey, byte[] caPublicKeyReference);
+  CalypsoCaCertificateV1Builder setCaPublicKey(RSAPublicKey caPublicKey, byte[] caPublicKeyReference);
 
   /**
    * Sets the validity period of the certificate's public key. This defines the timeframe when the
