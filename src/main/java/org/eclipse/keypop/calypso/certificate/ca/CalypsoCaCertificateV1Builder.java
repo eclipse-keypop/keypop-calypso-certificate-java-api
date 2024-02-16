@@ -46,6 +46,9 @@ public interface CalypsoCaCertificateV1Builder {
    * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
    * YYYYMMDD format in the certificate.
    *
+   * <p>The start date is optional. If it is not defined, the certificate is not subject to a start
+   * date constraint.
+   *
    * @param year The year of the start date (0-9999).
    * @param month The month of the start date (1-99).
    * @param day The day of the start date (1-99).
@@ -61,6 +64,9 @@ public interface CalypsoCaCertificateV1Builder {
    * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
    * YYYYMMDD format in the certificate.
    *
+   * <p>The end date is optional. If it is not defined, the certificate is not subject to an end
+   * date constraint.
+   *
    * @param year The year of the start date (0-9999).
    * @param month The month of the start date (1-99).
    * @param day The day of the start date (1-99).
@@ -71,16 +77,32 @@ public interface CalypsoCaCertificateV1Builder {
   CalypsoCaCertificateV1Builder withEndDate(int year, int month, int day);
 
   /**
-   * Restricts certificate validity to cards whose AID begins with the bytes provided.
+   * Restricts certificate validity to cards whose Application Identifier (AID) begins with the
+   * bytes provided.
    *
-   * <p>If the AID is not set, the certificate will be applicable to any card certificates.
+   * <p>This method allows you to specify an AID value to limit the applicability of the
+   * certificate. The certificate will only be valid for cards whose AID starts with the provided
+   * bytes.
    *
-   * @param aid The AID value as a 5 to 16 bytes byte array.
+   * <p>The AID is optional. When not set, no restriction related to the card AID will be applied.
+   *
+   * <p><b>Important:</b>
+   *
+   * <p>The <b>aid</b> field cannot contain only zero bytes.
+   *
+   * <p>The <b>isTruncated</b> field indicates whether the provided AID is truncated. If set to
+   * <b>true</b>, the certificate will be valid for cards whose AID starts with the provided bytes,
+   * even if the card's full AID is longer. If set to <b>false</b>, the certificate will only be
+   * valid for cards whose full AID exactly matches the provided bytes.
+   *
+   * @param aid The AID value as a 5 to 16 bytes byte array. Must not contain only zero bytes.
+   * @param isTruncated true if the provided AID is truncated, false otherwise.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided argument is null or out of range.
+   * @throws IllegalArgumentException If the provided AID is null, out of range, or contains only
+   *     zero bytes.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withAid(byte[] aid);
+  CalypsoCaCertificateV1Builder withAid(byte[] aid, boolean isTruncated);
 
   /**
    * Sets the CA rights for this card certificate, controlling which types of certificates can be
@@ -106,6 +128,8 @@ public interface CalypsoCaCertificateV1Builder {
    *       </ul>
    * </ul>
    *
+   * The CA rights byte is optional. If not set, the default value is 0.
+   *
    * @param caRights The byte representing the CA rights for this card certificate.
    * @return The current instance.
    * @throws IllegalArgumentException If the provided byte contains RFU values.
@@ -126,50 +150,14 @@ public interface CalypsoCaCertificateV1Builder {
    *   <li>Other values: Reserved for future use (RFU).
    * </ul>
    *
+   * The CA scope byte is optional. If not set, the default value is 0.
+   *
    * @param caScope The byte representing the CA scope for this card certificate.
    * @return The current instance.
    * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
   CalypsoCaCertificateV1Builder withCaScope(byte caScope);
-
-  /**
-   * Sets the CA operating mode, controlling how the target Calypso Prime PKI application AID should
-   * be verified during card certificate validation.
-   *
-   * <p>The provided byte defines the following behavior:
-   *
-   * <ul>
-   *   <li><b>Bits b7-b1:</b> Reserved for future use (RFU). Must be set to 0.
-   *   <li><b>Bit b0:</b> Target Calypso Prime PKI application AID matching:
-   *       <ul>
-   *         <li><b>%0:</b> Truncation forbidden:
-   *             <ul>
-   *               <li>The size of the card AID in the card certificate must be equal to the size of
-   *                   the target AID specified in this certificate.
-   *               <li>The corresponding number of first (leftmost) bytes of the card AID value in
-   *                   the card certificate and the target AID value in this certificate must be
-   *                   equal.
-   *             </ul>
-   *         <li><b>%1:</b> Truncation allowed:
-   *             <ul>
-   *               <li>The size of the card AID in the card certificate can be equal to or greater
-   *                   than the size of the target AID specified in this certificate.
-   *               <li>The specified size first (leftmost) bytes of the card AID value in the card
-   *                   certificate and the target AID value in this certificate must be equal.
-   *             </ul>
-   *       </ul>
-   * </ul>
-   *
-   * Choosing an appropriate operating mode is crucial for secure and verified certificate issuance.
-   * Refer to the Calypso Prime PKI specifications for further details and guidelines.
-   *
-   * @param caOperatingMode The byte representing the CA operating mode for this card certificate.
-   * @return The current instance.
-   * @throws IllegalArgumentException If the provided byte contains RFU values.
-   * @since 0.1.0
-   */
-  CalypsoCaCertificateV1Builder withCaOperatingMode(byte caOperatingMode);
 
   /**
    * Checks the consistency of the parameters, signs the certificate using the provided private key
@@ -183,6 +171,7 @@ public interface CalypsoCaCertificateV1Builder {
    *     public key.
    * @return A non-null reference.
    * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
@@ -195,6 +184,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @param caCertificateSigner The external signer to use for signing the CA certificate.
    * @return A non-null reference.
    * @throws IllegalArgumentException If the provided signer is null.
+   * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */

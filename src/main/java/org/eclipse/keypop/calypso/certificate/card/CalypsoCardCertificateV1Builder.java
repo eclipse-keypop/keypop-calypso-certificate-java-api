@@ -22,15 +22,15 @@ import org.eclipse.keypop.calypso.certificate.card.spi.CalypsoCardCertificateSig
 public interface CalypsoCardCertificateV1Builder {
 
   /**
-   * Sets the public key of the card, provided as a 64-byte raw array.
+   * Sets the public key of the card, provided as a 64-byte array.
    *
    * <p>This key is expected to be on the <strong>secp256r1</strong> elliptic curve. It will be used
    * for the verification of card signatures.
    *
-   * @param cardPublicKey The 64-byte raw array representing the public key on the
+   * @param cardPublicKey The 64-byte array representing the public key on the
    *     <strong>secp256r1</strong> curve.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided key is null or has an invalid length (not 64).
+   * @throws IllegalArgumentException If the provided key is null or out of range.
    * @since 0.1.0
    */
   CalypsoCardCertificateV1Builder withCardPublicKey(byte[] cardPublicKey);
@@ -40,6 +40,9 @@ public interface CalypsoCardCertificateV1Builder {
    *
    * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
    * YYYYMMDD format in the certificate.
+   *
+   * <p>The start date is optional. If it is not defined, the certificate is not subject to a start
+   * date constraint.
    *
    * @param year The year of the start date (0-9999).
    * @param month The month of the start date (1-99).
@@ -56,6 +59,9 @@ public interface CalypsoCardCertificateV1Builder {
    * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
    * YYYYMMDD format in the certificate.
    *
+   * <p>The end date is optional. If it is not defined, the certificate is not subject to an end
+   * date constraint.
+   *
    * @param year The year of the start date (0-9999).
    * @param month The month of the start date (1-99).
    * @param day The day of the start date (1-99).
@@ -66,13 +72,14 @@ public interface CalypsoCardCertificateV1Builder {
   CalypsoCardCertificateV1Builder withEndDate(int year, int month, int day);
 
   /**
-   * Restricts certificate validity to cards whose AID begins with the bytes provided.
+   * Sets the AID of the autonomous PKI application of the target card.
    *
-   * <p>If the AID is not set, the certificate will be applicable to any card certificates.
+   * <p>The <b>aid</b> field cannot contain only zero bytes.
    *
-   * @param aid The AID value as a 5 to 16 bytes byte array.
+   * @param aid The AID value as a 5 to 16 bytes byte array. Must not contain only zero bytes.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided argument is null or out of range.
+   * @throws IllegalArgumentException If the provided AID is null, out of range, or contains only
+   *     zero bytes.
    * @since 0.1.0
    */
   CalypsoCardCertificateV1Builder withAid(byte[] aid);
@@ -102,6 +109,8 @@ public interface CalypsoCardCertificateV1Builder {
    * Sets the index used to differentiate two card certificates generated with the same issuer
    * public key reference for the same card.
    *
+   * <p>The index is optional. By default, it is set to 0.
+   *
    * @param index The index of the card certificate.
    * @return The current instance.
    * @since 0.1.0
@@ -120,6 +129,7 @@ public interface CalypsoCardCertificateV1Builder {
    *     public key.
    * @return A non-null reference.
    * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
@@ -132,6 +142,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @param cardCertificateSigner The external signer for card certificate generation.
    * @return A non-null reference.
    * @throws IllegalArgumentException If the provided signer is null.
+   * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
