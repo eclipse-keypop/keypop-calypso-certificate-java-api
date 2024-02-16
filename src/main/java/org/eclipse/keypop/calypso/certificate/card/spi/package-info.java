@@ -1,6 +1,6 @@
 /**
- * Calypso card certificate external signing.
+ * SPIs to be implemented by end user applications related to Calypso card certificates signing.
  *
- * @since 0.2.0
+ * @since 0.1.0
  */
 package org.eclipse.keypop.calypso.certificate.card.spi;

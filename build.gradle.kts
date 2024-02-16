@@ -24,6 +24,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    implementation("org.eclipse.keypop:keypop-calypso-card-java-api:2.1.0-SNAPSHOT") { isChanging = true }
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.assertj:assertj-core:3.15.0")
 }

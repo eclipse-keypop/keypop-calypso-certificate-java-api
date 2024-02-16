@@ -9,9 +9,14 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.card;
 
+import org.eclipse.keypop.calypso.card.transaction.spi.CardCertificate;
+
 /**
  * A Calypso card certificate version 1.
  *
+ * <p>It can be used for certificate generation and external certificate validation.
+ *
+ * @see CardCertificate
  * @since 0.1.0
  */
 public interface CalypsoCardCertificateV1 extends CardCertificate {

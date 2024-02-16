@@ -9,49 +9,17 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.card;
 
-import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
-
+import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
 import org.eclipse.keypop.calypso.certificate.card.spi.CalypsoCardCertificateSignerSpi;
 
 /**
- * Builds a card certificate conforming to version 1 of the Calypso card certificate format.
+ * Builds a {@link CalypsoCardCertificateV1} conforming to version 1 of the Calypso card certificate
+ * format.
  *
  * @since 0.1.0
  */
 public interface CalypsoCardCertificateV1Builder {
-
-  /**
-   * Sets the external signer to be used for generating signed card certificates.
-   *
-   * @param cardCertificateSigner The external signer for card certificate generation.
-   * @return The current instance.
-   * @throws IllegalArgumentException If the provided signer is null.
-   * @throws IllegalStateException If an internal signer has already been configured using {@link
-   *     #useInternalSigner(RSAPrivateKey, byte[])}.
-   * @since 0.1.0
-   */
-  CalypsoCardCertificateV1Builder useExternalSigner(
-      CalypsoCardCertificateSignerSpi cardCertificateSigner);
-
-  /**
-   * Configures the builder to use the internal signer for generating signed card certificates.
-   *
-   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
-   * of 65537 and the specified public key reference for signing operations.
-   *
-   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
-   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
-   *     public key.
-   * @return The current instance.
-   * @throws IllegalArgumentException If any of the provided arguments are null, invalid, or have
-   *     incompatible formats.
-   * @throws IllegalStateException If an external signer has already been set using {@link
-   *     #useExternalSigner(CalypsoCardCertificateSignerSpi)}.
-   * @since 0.1.0
-   */
-  CalypsoCardCertificateV1Builder useInternalSigner(
-          RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
 
   /**
    * Sets the public key of the card, provided as a 64-byte raw array.
@@ -65,54 +33,62 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If the provided key is null or has an invalid length (not 64).
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setCardPublicKey(byte[] cardPublicKey);
+  CalypsoCardCertificateV1Builder withCardPublicKey(byte[] cardPublicKey);
 
   /**
-   * Sets the validity period of the certificate's public key. This defines the timeframe when the
-   * certificate can be considered trusted.
+   * Sets the start date of the validity period of the certificate's public key.
    *
-   * <p>If neither start nor end date is set, the certificate will have open-ended validity.
+   * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
+   * YYYYMMDD format in the certificate.
    *
-   * @param startDateYear The year of the start date (e.g., 2024). Valid range: 1900-2100.
-   * @param startDateMonth The month of the start date (1-12).
-   * @param startDateDay The day of the start date (1-31).
-   * @param endDateYear The year of the end date (e.g., 2025). Valid range: 1900-2100.
-   * @param endDateMonth The month of the end date (1-12).
-   * @param endDateDay The day of the end date.
+   * @param year The year of the start date (0-9999).
+   * @param month The month of the start date (1-99).
+   * @param day The day of the start date (1-99).
    * @return The current instance.
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setValidityPeriod(
-      int startDateYear,
-      int startDateMonth,
-      int startDateDay,
-      int endDateYear,
-      int endDateMonth,
-      int endDateDay);
+  CalypsoCardCertificateV1Builder withStartDate(int year, int month, int day);
 
   /**
-   * Sets the AID (Application Identifier) associated with the certificate.
+   * Sets the end date of the validity period of the certificate's public key.
+   *
+   * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
+   * YYYYMMDD format in the certificate.
+   *
+   * @param year The year of the start date (0-9999).
+   * @param month The month of the start date (1-99).
+   * @param day The day of the start date (1-99).
+   * @return The current instance.
+   * @throws IllegalArgumentException If any date parameter is out of range.
+   * @since 0.1.0
+   */
+  CalypsoCardCertificateV1Builder withEndDate(int year, int month, int day);
+
+  /**
+   * Restricts certificate validity to cards whose AID begins with the bytes provided.
+   *
+   * <p>If the AID is not set, the certificate will be applicable to any card certificates.
    *
    * @param aid The AID value as a 5 to 16 bytes byte array.
    * @return The current instance.
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setAid(byte[] aid);
+  CalypsoCardCertificateV1Builder withAid(byte[] aid);
 
   /**
    * Sets the serial number of the card for which the certificate is being generated.
    *
-   * @param serialNumber The serial number of the card as a 8-byte byte array.
+   * @param serialNumber The serial number of the card as an 8-byte byte array.
    * @return The current instance.
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setCardSerialNumber(byte[] serialNumber);
+  CalypsoCardCertificateV1Builder withCardSerialNumber(byte[] serialNumber);
 
   /**
-   * Sets the startup info for the card certificate.
+   * Sets the startup info of the card for which the certificate is being generated.
    *
    * @param startupInfo The 7-byte byte array representing the startup info for the card
    *     certificate.
@@ -120,7 +96,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setCardStartupInfo(byte[] startupInfo);
+  CalypsoCardCertificateV1Builder withCardStartupInfo(byte[] startupInfo);
 
   /**
    * Sets the index used to differentiate two card certificates generated with the same issuer
@@ -130,12 +106,34 @@ public interface CalypsoCardCertificateV1Builder {
    * @return The current instance.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder setIndex(int index);
+  CalypsoCardCertificateV1Builder withIndex(int index);
 
   /**
-   * TODO
+   * Checks the consistency of the parameters, signs the certificate using the provided private key
+   * and returns a new instance of {@link CalypsoCardCertificateV1}.
    *
-   * @return
+   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
+   * of 65537 and the specified public key reference for signing operations.
+   *
+   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
+   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
+   *     public key.
+   * @return A non-null reference.
+   * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @throws CertificateSigningException If an error occurs during the signing process.
+   * @since 0.1.0
    */
-  CalypsoCardCertificateV1 build();
+  CalypsoCardCertificateV1 build(RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
+
+  /**
+   * Checks the consistency of the parameters, signs the certificate using the provided signer and
+   * returns a new instance of {@link CalypsoCardCertificateV1}.
+   *
+   * @param cardCertificateSigner The external signer for card certificate generation.
+   * @return A non-null reference.
+   * @throws IllegalArgumentException If the provided signer is null.
+   * @throws CertificateSigningException If an error occurs during the signing process.
+   * @since 0.1.0
+   */
+  CalypsoCardCertificateV1 build(CalypsoCardCertificateSignerSpi cardCertificateSigner);
 }

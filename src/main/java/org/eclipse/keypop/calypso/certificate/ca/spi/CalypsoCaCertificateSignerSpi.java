@@ -20,7 +20,7 @@ package org.eclipse.keypop.calypso.certificate.ca.spi;
 public interface CalypsoCaCertificateSignerSpi {
 
   /**
-   * Gets the reference to the issuer's public key.
+   * Returns the reference to the issuer's public key.
    *
    * @return A 29-byte byte array.
    * @since 0.1.0
@@ -28,26 +28,14 @@ public interface CalypsoCaCertificateSignerSpi {
   byte[] getIssuerPublicKeyReference();
 
   /**
-   * Generates a signed CA certificate based on the provided data.
-   *
-   * @param allData The byte array containing all the data to be included in the certificate. This
-   *     typically includes information about the subject, validity period, and other certificate
-   *     attributes.
-   * @return The signed card certificate, represented as a byte array.
-   * @since 0.1.0
-   */
-  byte[] generateSignedCertificate(byte[] allData);
-
-  /**
-   * Generates a signed CA certificate based on the provided data and recoverable data. This method
-   * is similar to {@link #generateSignedCertificate(byte[])}, but allows for separate handling of
-   * non-recoverable and recoverable data during signing.
+   * Generates a signed CA certificate based on the provided data and recoverable data.
    *
    * @param data The byte array containing the non-recoverable data for the certificate.
    * @param recoverableData The byte array containing the recoverable data for the certificate. This
    *     might be encrypted or protected data that shouldn't be included in the final certificate
    *     but is needed for signature generation.
-   * @return The signed card certificate, represented as a byte array.
+   * @return The signed CA certificate, a 384-byte byte array containing the data followed by the
+   *     signature.
    * @since 0.1.0
    */
   byte[] generateSignedCertificate(byte[] data, byte[] recoverableData);

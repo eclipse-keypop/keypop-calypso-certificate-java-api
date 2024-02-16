@@ -9,53 +9,21 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.ca;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-
+import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
 import org.eclipse.keypop.calypso.certificate.ca.spi.CalypsoCaCertificateSignerSpi;
 
 /**
- * Builds CA certificates conforming to version 1 of the Calypso CA certificate format.
+ * Builds a {@link CalypsoCaCertificateV1} conforming to version 1 of the Calypso CA certificate
+ * format.
  *
  * @since 0.1.0
  */
 public interface CalypsoCaCertificateV1Builder {
-  /**
-   * Sets the external signer to be used for generating signed CA certificates.
-   *
-   * @param caCertificateSigner The external signer for ca certificate generation.
-   * @return The current instance.
-   * @throws IllegalArgumentException If the provided signer is null.
-   * @throws IllegalStateException If an internal signer has already been configured using {@link
-   *     #useInternalSigner(RSAPrivateKey, byte[])}.
-   * @since 0.1.0
-   */
-  CalypsoCaCertificateV1Builder useExternalSigner(
-      CalypsoCaCertificateSignerSpi caCertificateSigner);
 
   /**
-   * Configures the builder to use the internal signer for generating signed CA certificates.
-   *
-   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
-   * of 65537 and the specified public key reference for signing operations.
-   *
-   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
-   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
-   *     public key.
-   * @return The current instance.
-   * @throws IllegalArgumentException If any of the provided arguments are null, invalid, or have
-   *     incompatible formats.
-   * @throws IllegalStateException If an external signer has already been set using {@link
-   *     #useExternalSigner(CalypsoCaCertificateSignerSpi)}.
-   * @since 0.1.0
-   */
-  CalypsoCaCertificateV1Builder useInternalSigner(
-          RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
-
-  /**
-   * Sets the public key of the CA, provided as a 64-byte raw array.
+   * Sets the public key of the CA.
    *
    * <p>This key is expected to be a 2048 bits RSA public key with a public exponent equal to 65537.
    * It will be used for the verification of card certificates.
@@ -63,40 +31,47 @@ public interface CalypsoCaCertificateV1Builder {
    * <p>The associated reference is a 29-byte byte array.
    *
    * @param caPublicKey The RSA public key of the CA (2048 bits, public exponent 65537).
-   * @param caPublicKeyReference The CA public key reference.
+   * @param caPublicKeyReference A 29-byte byte array representing a reference to the CA's public
+   *     key.
    * @return The current instance.
    * @throws IllegalArgumentException If one of the provided argument is null or invalid.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setCaPublicKey(RSAPublicKey caPublicKey, byte[] caPublicKeyReference);
+  CalypsoCaCertificateV1Builder withCaPublicKey(
+      RSAPublicKey caPublicKey, byte[] caPublicKeyReference);
 
   /**
-   * Sets the validity period of the certificate's public key. This defines the timeframe when the
-   * certificate can be considered trusted.
+   * Sets the start date of the validity period of the certificate's public key.
    *
-   * <p>If neither start nor end date is set, the certificate will have open-ended validity.
+   * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
+   * YYYYMMDD format in the certificate.
    *
-   * @param startDateYear The year of the start date (e.g., 2024). Valid range: 1900-2100.
-   * @param startDateMonth The month of the start date (1-12).
-   * @param startDateDay The day of the start date (1-31).
-   * @param endDateYear The year of the end date (e.g., 2025). Valid range: 1900-2100.
-   * @param endDateMonth The month of the end date (1-12).
-   * @param endDateDay The day of the end date.
+   * @param year The year of the start date (0-9999).
+   * @param month The month of the start date (1-99).
+   * @param day The day of the start date (1-99).
    * @return The current instance.
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setValidityPeriod(
-      int startDateYear,
-      int startDateMonth,
-      int startDateDay,
-      int endDateYear,
-      int endDateMonth,
-      int endDateDay);
+  CalypsoCaCertificateV1Builder withStartDate(int year, int month, int day);
 
   /**
-   * Sets the AID (Application Identifier) of the card certificates for which the certificate is
-   * applicable.
+   * Sets the end date of the validity period of the certificate's public key.
+   *
+   * <p>No consistency test is performed on the values supplied, as they will be coded in BCD
+   * YYYYMMDD format in the certificate.
+   *
+   * @param year The year of the start date (0-9999).
+   * @param month The month of the start date (1-99).
+   * @param day The day of the start date (1-99).
+   * @return The current instance.
+   * @throws IllegalArgumentException If any date parameter is out of range.
+   * @since 0.1.0
+   */
+  CalypsoCaCertificateV1Builder withEndDate(int year, int month, int day);
+
+  /**
+   * Restricts certificate validity to cards whose AID begins with the bytes provided.
    *
    * <p>If the AID is not set, the certificate will be applicable to any card certificates.
    *
@@ -105,18 +80,16 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setAid(byte[] aid);
+  CalypsoCaCertificateV1Builder withAid(byte[] aid);
 
   /**
-   * Sets the CA rights for this card certificate, controlling which types of certificates the card
-   * can be used to authenticate.
+   * Sets the CA rights for this card certificate, controlling which types of certificates can be
+   * authenticated.
    *
-   * <p>The provided <code>caRights</code> byte defines the following permissions:
+   * <p>The provided byte defines the following permissions:
    *
    * <ul>
-   *   <li><b>Bits b7-b4:</b> Reserved for future use (RFU). Must be set to 0. <br>
-   *       Attempting to set non-zero values in these bits will throw an {@link
-   *       IllegalArgumentException}.
+   *   <li><b>Bits b7-b4:</b> Reserved for future use (RFU). Must be set to 0.
    *   <li><b>Bits b3-b2:</b> Card key certificates authentication right:
    *       <ul>
    *         <li>%00: CardCert authentication right not specified.
@@ -135,17 +108,16 @@ public interface CalypsoCaCertificateV1Builder {
    *
    * @param caRights The byte representing the CA rights for this card certificate.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided byte contains invalid values, including
-   *     non-zero values in reserved bits.
+   * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setCaRights(byte caRights);
+  CalypsoCaCertificateV1Builder withCaRights(byte caRights);
 
   /**
    * Sets the CA scope for this card certificate, defining the context in which the CA key pair can
    * be used.
    *
-   * <p>The provided <code>caScope</code> byte specifies the allowed usage context:
+   * <p>The provided byte specifies the allowed usage context:
    *
    * <ul>
    *   <li>%00: Scope restrictions not specified.
@@ -154,27 +126,21 @@ public interface CalypsoCaCertificateV1Builder {
    *   <li>Other values: Reserved for future use (RFU).
    * </ul>
    *
-   * Choosing an appropriate scope is crucial for security and proper certificate management. Select
-   * a scope that aligns with the intended use of the CA key pair to avoid potential misuse.
-   *
    * @param caScope The byte representing the CA scope for this card certificate.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided byte contains an invalid value, including
-   *     non-standard or reserved values.
+   * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setCaScope(byte caScope);
+  CalypsoCaCertificateV1Builder withCaScope(byte caScope);
 
   /**
    * Sets the CA operating mode, controlling how the target Calypso Prime PKI application AID should
    * be verified during card certificate validation.
    *
-   * <p>The provided <code>caOperatingMode</code> byte defines the following behavior:
+   * <p>The provided byte defines the following behavior:
    *
    * <ul>
-   *   <li><b>Bits b7-b1:</b> Reserved for future use (RFU). Must be set to 0. <br>
-   *       Attempting to set non-zero values in these bits will throw an {@link
-   *       IllegalArgumentException}.
+   *   <li><b>Bits b7-b1:</b> Reserved for future use (RFU). Must be set to 0.
    *   <li><b>Bit b0:</b> Target Calypso Prime PKI application AID matching:
    *       <ul>
    *         <li><b>%0:</b> Truncation forbidden:
@@ -200,16 +166,37 @@ public interface CalypsoCaCertificateV1Builder {
    *
    * @param caOperatingMode The byte representing the CA operating mode for this card certificate.
    * @return The current instance.
-   * @throws IllegalArgumentException If the provided byte contains invalid values, including
-   *     non-zero values in reserved bits.
+   * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder setCaOperatingMode(byte caOperatingMode);
+  CalypsoCaCertificateV1Builder withCaOperatingMode(byte caOperatingMode);
 
   /**
-   * TODO
+   * Checks the consistency of the parameters, signs the certificate using the provided private key
+   * and returns a new instance of {@link CalypsoCaCertificateV1}.
    *
-   * @return
+   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
+   * of 65537 and the specified public key reference for signing operations.
+   *
+   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
+   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
+   *     public key.
+   * @return A non-null reference.
+   * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @throws CertificateSigningException If an error occurs during the signing process.
+   * @since 0.1.0
    */
-  CalypsoCaCertificateV1 build();
+  CalypsoCaCertificateV1 build(RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
+
+  /**
+   * Checks the consistency of the parameters, signs the certificate using the provided signer and
+   * returns a new instance of {@link CalypsoCaCertificateV1}.
+   *
+   * @param caCertificateSigner The external signer to use for signing the CA certificate.
+   * @return A non-null reference.
+   * @throws IllegalArgumentException If the provided signer is null.
+   * @throws CertificateSigningException If an error occurs during the signing process.
+   * @since 0.1.0
+   */
+  CalypsoCaCertificateV1 build(CalypsoCaCertificateSignerSpi caCertificateSigner);
 }
