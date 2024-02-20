@@ -19,13 +19,4 @@ import org.eclipse.keypop.calypso.card.transaction.spi.CaCertificate;
  * @see CaCertificate
  * @since 0.1.0
  */
-public interface CalypsoCaCertificateV1 extends CaCertificate {
-
-  /**
-   * Returns a byte array corresponding to the certificate as it is stored in the card.
-   *
-   * @return A 384-byte byte array.
-   * @since 0.1.0
-   */
-  byte[] getRawData();
-}
+public interface CalypsoCaCertificateV1 extends CalypsoCaCertificate {}

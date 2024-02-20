@@ -7,16 +7,22 @@
  *
  * SPDX-License-Identifier: MIT
  ****************************************************************************** */
-package org.eclipse.keypop.calypso.certificate.card;
+package org.eclipse.keypop.calypso.certificate.ca;
 
-import org.eclipse.keypop.calypso.card.transaction.spi.CardCertificate;
+import org.eclipse.keypop.calypso.card.transaction.spi.CaCertificate;
 
 /**
- * A Calypso card certificate version 1.
+ * CA Certificate compliant with the 384-byte format supported by the Calypso cards.
  *
- * <p>It can be used for certificate generation and external certificate validation.
- *
- * @see CardCertificate
  * @since 0.1.0
  */
-public interface CalypsoCardCertificateV1 extends CalypsoCardCertificate {}
+public interface CalypsoCaCertificate extends CaCertificate {
+
+  /**
+   * Returns a byte array corresponding to the certificate as it is stored in the card.
+   *
+   * @return A 384-byte byte array.
+   * @since 0.1.0
+   */
+  byte[] getRawData();
+}

@@ -9,14 +9,20 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.card;
 
-import org.eclipse.keypop.calypso.card.transaction.spi.CardCertificate;
+import org.eclipse.keypop.calypso.card.transaction.spi.CaCertificate;
 
 /**
- * A Calypso card certificate version 1.
+ * Card Certificate compliant with the 316-byte format supported by the Calypso cards.
  *
- * <p>It can be used for certificate generation and external certificate validation.
- *
- * @see CardCertificate
  * @since 0.1.0
  */
-public interface CalypsoCardCertificateV1 extends CalypsoCardCertificate {}
+public interface CalypsoCardCertificate extends CaCertificate {
+
+  /**
+   * Returns a byte array corresponding to the certificate as it is stored in the card.
+   *
+   * @return A 316-byte byte array.
+   * @since 0.1.0
+   */
+  byte[] getRawData();
+}

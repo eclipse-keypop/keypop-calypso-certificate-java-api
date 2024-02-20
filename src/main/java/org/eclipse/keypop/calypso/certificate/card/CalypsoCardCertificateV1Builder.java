@@ -9,9 +9,8 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.card;
 
-import java.security.interfaces.RSAPrivateKey;
+import org.eclipse.keypop.calypso.certificate.CertificateConsistencyException;
 import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
-import org.eclipse.keypop.calypso.certificate.card.spi.CalypsoCardCertificateSignerSpi;
 
 /**
  * Builds a {@link CalypsoCardCertificateV1} conforming to version 1 of the Calypso card certificate
@@ -118,33 +117,16 @@ public interface CalypsoCardCertificateV1Builder {
   CalypsoCardCertificateV1Builder withIndex(int index);
 
   /**
-   * Checks the consistency of the parameters, signs the certificate using the provided private key
-   * and returns a new instance of {@link CalypsoCardCertificateV1}.
+   * Checks the consistency of the parameters, signs the certificate either using the provided
+   * private key or the provided signer and returns a new instance of {@link
+   * CalypsoCardCertificateV1}.
    *
-   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
-   * of 65537 and the specified public key reference for signing operations.
-   *
-   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
-   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
-   *     public key.
    * @return A non-null reference.
    * @throws IllegalArgumentException If one of the provided arguments is null.
    * @throws IllegalStateException If one of the required parameters is wrong or missing.
+   * @throws CertificateConsistencyException If the provided parameters are inconsistent.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1 build(RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
-
-  /**
-   * Checks the consistency of the parameters, signs the certificate using the provided signer and
-   * returns a new instance of {@link CalypsoCardCertificateV1}.
-   *
-   * @param cardCertificateSigner The external signer for card certificate generation.
-   * @return A non-null reference.
-   * @throws IllegalArgumentException If the provided signer is null.
-   * @throws IllegalStateException If one of the required parameters is wrong or missing.
-   * @throws CertificateSigningException If an error occurs during the signing process.
-   * @since 0.1.0
-   */
-  CalypsoCardCertificateV1 build(CalypsoCardCertificateSignerSpi cardCertificateSigner);
+  CalypsoCardCertificateV1 build();
 }

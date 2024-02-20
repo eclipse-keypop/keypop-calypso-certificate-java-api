@@ -9,10 +9,9 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate.ca;
 
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import org.eclipse.keypop.calypso.certificate.CertificateConsistencyException;
 import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
-import org.eclipse.keypop.calypso.certificate.ca.spi.CalypsoCaCertificateSignerSpi;
 
 /**
  * Builds a {@link CalypsoCaCertificateV1} conforming to version 1 of the Calypso CA certificate
@@ -163,30 +162,12 @@ public interface CalypsoCaCertificateV1Builder {
    * Checks the consistency of the parameters, signs the certificate using the provided private key
    * and returns a new instance of {@link CalypsoCaCertificateV1}.
    *
-   * <p>The internal signer will use the provided 2048 bits RSA private key with a public exponent
-   * of 65537 and the specified public key reference for signing operations.
-   *
-   * @param issuerPrivateKey The RSA private key of the issuer (2048 bits, public exponent 65537).
-   * @param issuerPublicKeyReference A 29-byte byte array representing a reference to the issuer's
-   *     public key.
    * @return A non-null reference.
    * @throws IllegalArgumentException If one of the provided arguments is null.
    * @throws IllegalStateException If one of the required parameters is wrong or missing.
+   * @throws CertificateConsistencyException If the provided parameters are inconsistent.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1 build(RSAPrivateKey issuerPrivateKey, byte[] issuerPublicKeyReference);
-
-  /**
-   * Checks the consistency of the parameters, signs the certificate using the provided signer and
-   * returns a new instance of {@link CalypsoCaCertificateV1}.
-   *
-   * @param caCertificateSigner The external signer to use for signing the CA certificate.
-   * @return A non-null reference.
-   * @throws IllegalArgumentException If the provided signer is null.
-   * @throws IllegalStateException If one of the required parameters is wrong or missing.
-   * @throws CertificateSigningException If an error occurs during the signing process.
-   * @since 0.1.0
-   */
-  CalypsoCaCertificateV1 build(CalypsoCaCertificateSignerSpi caCertificateSigner);
+  CalypsoCaCertificateV1 build();
 }
