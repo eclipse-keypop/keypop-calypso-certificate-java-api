@@ -7,19 +7,17 @@
  *
  * SPDX-License-Identifier: MIT
  ****************************************************************************** */
-package org.eclipse.keypop.calypso.certificate.ca;
+package org.eclipse.keypop.calypso.certificate;
 
 import java.security.interfaces.RSAPublicKey;
-import org.eclipse.keypop.calypso.certificate.CertificateConsistencyException;
-import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
 
 /**
- * Builds a {@link CalypsoCaCertificateV1} conforming to version 1 of the Calypso CA certificate
+ * Generates a certificate as a byte array conforming to version 1 of the Calypso CA certificate
  * format.
  *
  * @since 0.1.0
  */
-public interface CalypsoCaCertificateV1Builder {
+public interface CalypsoCaCertificateV1Generator {
 
   /**
    * Sets the public key of the CA.
@@ -29,15 +27,15 @@ public interface CalypsoCaCertificateV1Builder {
    *
    * <p>The associated reference is a 29-byte byte array.
    *
-   * @param caPublicKey The RSA public key of the CA (2048 bits, public exponent 65537).
    * @param caPublicKeyReference A 29-byte byte array representing a reference to the CA's public
    *     key.
+   * @param caPublicKey The RSA public key of the CA (2048 bits, public exponent 65537).
    * @return The current instance.
    * @throws IllegalArgumentException If one of the provided argument is null or invalid.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withCaPublicKey(
-      RSAPublicKey caPublicKey, byte[] caPublicKeyReference);
+  CalypsoCaCertificateV1Generator withCaPublicKey(
+      byte[] caPublicKeyReference, RSAPublicKey caPublicKey);
 
   /**
    * Sets the start date of the validity period of the certificate's public key.
@@ -55,7 +53,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withStartDate(int year, int month, int day);
+  CalypsoCaCertificateV1Generator withStartDate(int year, int month, int day);
 
   /**
    * Sets the end date of the validity period of the certificate's public key.
@@ -73,7 +71,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withEndDate(int year, int month, int day);
+  CalypsoCaCertificateV1Generator withEndDate(int year, int month, int day);
 
   /**
    * Restricts certificate validity to cards whose Application Identifier (AID) begins with the
@@ -101,7 +99,7 @@ public interface CalypsoCaCertificateV1Builder {
    *     zero bytes.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withAid(byte[] aid, boolean isTruncated);
+  CalypsoCaCertificateV1Generator withAid(byte[] aid, boolean isTruncated);
 
   /**
    * Sets the CA rights for this card certificate, controlling which types of certificates can be
@@ -134,7 +132,7 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withCaRights(byte caRights);
+  CalypsoCaCertificateV1Generator withCaRights(byte caRights);
 
   /**
    * Sets the CA scope for this card certificate, defining the context in which the CA key pair can
@@ -156,18 +154,17 @@ public interface CalypsoCaCertificateV1Builder {
    * @throws IllegalArgumentException If the provided byte contains RFU values.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder withCaScope(byte caScope);
+  CalypsoCaCertificateV1Generator withCaScope(byte caScope);
 
   /**
-   * Checks the consistency of the parameters, signs the certificate using the provided private key
-   * and returns a new instance of {@link CalypsoCaCertificateV1}.
+   * Checks the consistency of the parameters, signs the certificate using the provided signer and
+   * returns a byte array representing the certificate ready to be injected into a card.
    *
-   * @return A non-null reference.
-   * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @return A 384-byte byte array.
    * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateConsistencyException If the provided parameters are inconsistent.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1 build();
+  byte[] generate();
 }

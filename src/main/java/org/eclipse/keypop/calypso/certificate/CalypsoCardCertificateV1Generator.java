@@ -7,18 +7,15 @@
  *
  * SPDX-License-Identifier: MIT
  ****************************************************************************** */
-package org.eclipse.keypop.calypso.certificate.card;
-
-import org.eclipse.keypop.calypso.certificate.CertificateConsistencyException;
-import org.eclipse.keypop.calypso.certificate.CertificateSigningException;
+package org.eclipse.keypop.calypso.certificate;
 
 /**
- * Builds a {@link CalypsoCardCertificateV1} conforming to version 1 of the Calypso card certificate
+ * Generates a certificate as a byte array conforming to version 1 of the Calypso card certificate
  * format.
  *
  * @since 0.1.0
  */
-public interface CalypsoCardCertificateV1Builder {
+public interface CalypsoCardCertificateV1Generator {
 
   /**
    * Sets the public key of the card, provided as a 64-byte array.
@@ -32,7 +29,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If the provided key is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withCardPublicKey(byte[] cardPublicKey);
+  CalypsoCardCertificateV1Generator withCardPublicKey(byte[] cardPublicKey);
 
   /**
    * Sets the start date of the validity period of the certificate's public key.
@@ -50,7 +47,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withStartDate(int year, int month, int day);
+  CalypsoCardCertificateV1Generator withStartDate(int year, int month, int day);
 
   /**
    * Sets the end date of the validity period of the certificate's public key.
@@ -68,7 +65,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If any date parameter is out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withEndDate(int year, int month, int day);
+  CalypsoCardCertificateV1Generator withEndDate(int year, int month, int day);
 
   /**
    * Sets the AID of the autonomous PKI application of the target card.
@@ -81,7 +78,7 @@ public interface CalypsoCardCertificateV1Builder {
    *     zero bytes.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withAid(byte[] aid);
+  CalypsoCardCertificateV1Generator withCardAid(byte[] aid);
 
   /**
    * Sets the serial number of the card for which the certificate is being generated.
@@ -91,7 +88,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withCardSerialNumber(byte[] serialNumber);
+  CalypsoCardCertificateV1Generator withCardSerialNumber(byte[] serialNumber);
 
   /**
    * Sets the startup info of the card for which the certificate is being generated.
@@ -102,7 +99,7 @@ public interface CalypsoCardCertificateV1Builder {
    * @throws IllegalArgumentException If the provided argument is null or out of range.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withCardStartupInfo(byte[] startupInfo);
+  CalypsoCardCertificateV1Generator withCardStartupInfo(byte[] startupInfo);
 
   /**
    * Sets the index used to differentiate two card certificates generated with the same issuer
@@ -114,19 +111,17 @@ public interface CalypsoCardCertificateV1Builder {
    * @return The current instance.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder withIndex(int index);
+  CalypsoCardCertificateV1Generator withIndex(int index);
 
   /**
-   * Checks the consistency of the parameters, signs the certificate either using the provided
-   * private key or the provided signer and returns a new instance of {@link
-   * CalypsoCardCertificateV1}.
+   * Checks the consistency of the parameters, signs the certificate using the provided signer and
+   * returns a byte array representing the certificate ready to be injected into a card.
    *
-   * @return A non-null reference.
-   * @throws IllegalArgumentException If one of the provided arguments is null.
+   * @return A 316-byte byte array.
    * @throws IllegalStateException If one of the required parameters is wrong or missing.
    * @throws CertificateConsistencyException If the provided parameters are inconsistent.
    * @throws CertificateSigningException If an error occurs during the signing process.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1 build();
+  byte[] generate();
 }

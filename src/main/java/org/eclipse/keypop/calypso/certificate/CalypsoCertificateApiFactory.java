@@ -9,8 +9,6 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate;
 
-import org.eclipse.keypop.calypso.certificate.ca.CalypsoCaCertificateV1Builder;
-import org.eclipse.keypop.calypso.certificate.card.CalypsoCardCertificateV1Builder;
 import org.eclipse.keypop.calypso.certificate.spi.CalypsoCertificateSignerSpi;
 
 /**
@@ -36,28 +34,9 @@ public interface CalypsoCertificateApiFactory {
   CalypsoCertificateStore getCalypsoCertificateStore();
 
   /**
-   * Creates a new builder for Calypso CA certificates (version 1) using the internal signer.
+   * Creates a new generator for Calypso CA certificates (version 1) using an external signer.
    *
-   * <p>The builder is used to configure and build signed Calypso CA certificates.
-   *
-   * <p>This method must be called after the issuer certificate and its associated private key have
-   * been injected into the store using the specified issuer public key reference.
-   *
-   * @param issuerPublicKeyReference The reference to issuer's public key in the store.
-   * @throws IllegalStateException If the provided reference is unknown or the issuer's private key
-   *     is missing.
-   * @throws CertificateConsistencyException If the provided reference doesn't designate a valid
-   *     certification for the operation.
-   * @return A non-null reference.
-   * @since 0.1.0
-   */
-  CalypsoCaCertificateV1Builder createCalypsoCaCertificateV1Builder(
-      byte[] issuerPublicKeyReference);
-
-  /**
-   * Creates a new builder for Calypso CA certificates (version 1) using an external signer.
-   *
-   * <p>The builder is used to configure and build signed Calypso CA certificates.
+   * <p>The generator is used to configure and generate signed Calypso CA certificates.
    *
    * <p>This method must be called after the issuer certificate of the signer using the specified
    * issuer public key reference.
@@ -70,32 +49,13 @@ public interface CalypsoCertificateApiFactory {
    * @return A non-null reference.
    * @since 0.1.0
    */
-  CalypsoCaCertificateV1Builder createCalypsoCaCertificateV1Builder(
+  CalypsoCaCertificateV1Generator createCalypsoCaCertificateV1Generator(
       byte[] issuerPublicKeyReference, CalypsoCertificateSignerSpi caCertificateSigner);
 
   /**
-   * Creates a new builder for Calypso card certificates (version 1) using the internal signer.
+   * Creates a new generator for Calypso card certificates (version 1) using an external signer.
    *
-   * <p>The builder is used to configure and build signed Calypso card certificates.
-   *
-   * <p>This method must be called after the issuer certificate and its associated private key have
-   * been injected into the store using the specified issuer public key reference.
-   *
-   * @param issuerPublicKeyReference The reference to issuer's public key in the store.
-   * @throws IllegalStateException If the provided reference is unknown or the issuer's private key
-   *     is missing.
-   * @throws CertificateConsistencyException If the provided reference doesn't designate a valid
-   *     certification for the operation.
-   * @return A non-null reference.
-   * @since 0.1.0
-   */
-  CalypsoCardCertificateV1Builder createCalypsoCardCertificateV1Builder(
-      byte[] issuerPublicKeyReference);
-
-  /**
-   * Creates a new builder for Calypso card certificates (version 1) using an external signer.
-   *
-   * <p>The builder is used to configure and build signed Calypso card certificates.
+   * <p>The generator is used to configure and generate signed Calypso card certificates.
    *
    * <p>This method must be called after the issuer certificate of the signer using the specified
    * issuer public key reference.
@@ -108,6 +68,6 @@ public interface CalypsoCertificateApiFactory {
    * @return A non-null reference.
    * @since 0.1.0
    */
-  CalypsoCardCertificateV1Builder createCalypsoCardCertificateV1Builder(
+  CalypsoCardCertificateV1Generator createCalypsoCardCertificateV1Generator(
       byte[] issuerPublicKeyReference, CalypsoCertificateSignerSpi cardCertificateSigner);
 }

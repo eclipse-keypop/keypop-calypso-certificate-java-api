@@ -9,20 +9,10 @@
  ****************************************************************************** */
 package org.eclipse.keypop.calypso.certificate;
 
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import org.eclipse.keypop.calypso.certificate.ca.CalypsoCaCertificate;
 
 /**
- * Provides a store for managing Calypso Certificate Authority (CA) certificates and keys.
- *
- * <p>This interface offers methods for adding the following to the store:
- *
- * <ul>
- *   <li>PCA public keys and key pairs
- *   <li>Calypso CA certificates
- *   <li>Calypso CA certificates with their associated private keys
- * </ul>
+ * Provides a store for managing Calypso Certificate Authority (CA) certificates and public keys.
  *
  * <p>The stored certificates and keys are used for verifying and creating Calypso CA certificates
  * within the certificate infrastructure.
@@ -44,48 +34,20 @@ public interface CalypsoCertificateStore {
    * <p>The provided public key reference will be used for identifying the key when creating
    * certificates within the certificate infrastructure.
    *
-   * <p>This method is typically used for scenarios where the need is to verify Calypso CA
-   * certificates. By providing both the public and private keys, the store has the necessary
-   * information for these operations.
-   *
    * <p>The key reference is to be used when creating certificates according to the desired
    * infrastructure.
    *
    * <p>This method is suitable for providing means to verify CA certificates.
    *
-   * @param publicKeyReference The reference to the public key.
-   * @param publicKey The public key.
+   * @param pcaPublicKeyReference The reference to the PCA public key.
+   * @param pcaPublicKey The PCA public key.
    * @return The current instance.
    * @throws IllegalArgumentException If one of the argument is null or if the key is not a 2048-bit
    *     RSA key.
+   * @throws IllegalStateException If the reference to the public key already in the store.
    * @since 0.1.0
    */
-  CalypsoCertificateStore addPcaPublicKey(byte[] publicKeyReference, RSAPublicKey publicKey);
-
-  /**
-   * Adds a Primary Certification Authority (PCA) public key, its reference, and the associated
-   * private key.
-   *
-   * <p>This method expects a 2048-bit RSA key with an exponent of 65537. Both the public part of
-   * the key and its associated private part must be provided.
-   *
-   * <p>The provided public key reference will be used for identifying the key when creating
-   * certificates within the certificate infrastructure.
-   *
-   * <p>This method is typically used for scenarios where the need is to verify and/or create
-   * Calypso CA certificates. By providing both the public and private keys, the store has the
-   * necessary information for these operations.
-   *
-   * @param publicKeyReference The reference to the public key.
-   * @param publicKey The public key.
-   * @param privateKey The associated private key corresponding to the provided public key.
-   * @return The current instance.
-   * @throws IllegalArgumentException If one of the argument is null or if the provided key pair is
-   *     not a valid 2048-bit RSA key pair.
-   * @since 0.1.0
-   */
-  CalypsoCertificateStore addPcaKeyPair(
-      byte[] publicKeyReference, RSAPublicKey publicKey, RSAPrivateKey privateKey);
+  CalypsoCertificateStore addPcaPublicKey(byte[] pcaPublicKeyReference, RSAPublicKey pcaPublicKey);
 
   /**
    * Adds a Calypso Certificate Authority (CA) certificate to the store.
@@ -97,34 +59,12 @@ public interface CalypsoCertificateStore {
    * <p>This method is typically used to add an intermediate CA certificates necessary for
    * validating other certificates within the infrastructure.
    *
-   * @param caCertificate The Calypso CA certificate to add.
+   * @param caCertificate A 384-byte byte array containing the Calypso CA certificate to add.
    * @return The current instance.
    * @throws IllegalArgumentException If the certificate is null.
+   * @throws IllegalStateException If the reference to the public key already in the store.
    * @throws CertificateConsistencyException If the certificate is not trusted.
    * @since 0.1.0
    */
-  CalypsoCertificateStore addCalypsoCaCertificate(CalypsoCaCertificate caCertificate);
-
-  /**
-   * Adds a Calypso Certificate Authority (CA) certificate and its associated private key to the
-   * store.
-   *
-   * <p>This method adds the provided certificate and its associated private key to the store. Both
-   * the certificate must be valid (signed by an already referenced authority) and the private key
-   * must correspond to the certificate.
-   *
-   * <p>This method is typically used for scenarios where you need to issue Calypso CA or card
-   * certificates. By providing both the certificate and its private key, the store has the
-   * necessary information to sign new certificates.
-   *
-   * @param caCertificate The Calypso CA certificate to add.
-   * @param caPrivateKey The private key associated with the provided certificate.
-   * @return The current instance.
-   * @throws IllegalArgumentException If either the certificate or the private key is null or
-   *     invalid, or if they do not correspond to each other.
-   * @throws CertificateConsistencyException If the certificate is not trusted.
-   * @since 0.1.0
-   */
-  CalypsoCertificateStore addCalypsoCaCertificate(
-      CalypsoCaCertificate caCertificate, RSAPrivateKey caPrivateKey);
+  CalypsoCertificateStore addCalypsoCaCertificate(byte[] caCertificate);
 }
