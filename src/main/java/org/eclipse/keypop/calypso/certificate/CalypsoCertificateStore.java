@@ -50,6 +50,30 @@ public interface CalypsoCertificateStore {
   CalypsoCertificateStore addPcaPublicKey(byte[] pcaPublicKeyReference, RSAPublicKey pcaPublicKey);
 
   /**
+   * Adds a Primary Certification Authority (PCA) public key from it modulus and its reference.
+   *
+   * <p>This method expects the 256-byte modulus of a 2048-bit RSA public key with an exponent of
+   * 65537.
+   *
+   * <p>The provided public key reference will be used for identifying the key when creating
+   * certificates within the certificate infrastructure.
+   *
+   * <p>The key reference is to be used when creating certificates according to the desired
+   * infrastructure.
+   *
+   * <p>This method is suitable for providing means to verify CA certificates.
+   *
+   * @param pcaPublicKeyReference The reference to the PCA public key.
+   * @param pcaPublicKeyModulus The modulus of the PCA public key as a 256-byte byte array.
+   * @return The current instance.
+   * @throws IllegalArgumentException If one of the argument is null or if the key modulus is not
+   *     256 bytes long.
+   * @throws IllegalStateException If the reference to the public key already in the store.
+   * @since 0.1.0
+   */
+  CalypsoCertificateStore addPcaPublicKey(byte[] pcaPublicKeyReference, byte[] pcaPublicKeyModulus);
+
+  /**
    * Adds a Calypso Certificate Authority (CA) certificate to the store.
    *
    * <p>This method adds the provided certificate to the store. The certificate must be valid
@@ -61,7 +85,7 @@ public interface CalypsoCertificateStore {
    *
    * @param caCertificate A 384-byte byte array containing the Calypso CA certificate to add.
    * @return The current instance.
-   * @throws IllegalArgumentException If the certificate is null.
+   * @throws IllegalArgumentException If the certificate is null or its format is unknown.
    * @throws IllegalStateException If the reference to the public key already in the store.
    * @throws CertificateConsistencyException If the certificate is not trusted.
    * @since 0.1.0
