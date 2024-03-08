@@ -10,7 +10,7 @@
 package org.eclipse.keypop.calypso.certificate;
 
 /**
- * Exception that is thrown when an error occurs during the certificate validation process.
+ * Indicated that an error occurred during the certificate validation process.
  *
  * @since 0.1.0
  */
