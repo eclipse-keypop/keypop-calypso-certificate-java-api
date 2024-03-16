@@ -41,13 +41,12 @@ public interface CalypsoCertificateStore {
    *
    * @param pcaPublicKeyReference The reference to the PCA public key.
    * @param pcaPublicKey The PCA public key.
-   * @return The current instance.
    * @throws IllegalArgumentException If one of the argument is null or if the key is not a 2048-bit
    *     RSA key.
    * @throws IllegalStateException If the reference to the public key already in the store.
    * @since 0.1.0
    */
-  CalypsoCertificateStore addPcaPublicKey(byte[] pcaPublicKeyReference, RSAPublicKey pcaPublicKey);
+  void addPcaPublicKey(byte[] pcaPublicKeyReference, RSAPublicKey pcaPublicKey);
 
   /**
    * Adds a Primary Certification Authority (PCA) public key from it modulus and its reference.
@@ -65,16 +64,17 @@ public interface CalypsoCertificateStore {
    *
    * @param pcaPublicKeyReference The reference to the PCA public key.
    * @param pcaPublicKeyModulus The modulus of the PCA public key as a 256-byte byte array.
-   * @return The current instance.
    * @throws IllegalArgumentException If one of the argument is null or if the key modulus is not
    *     256 bytes long.
    * @throws IllegalStateException If the reference to the public key already in the store.
+   * @throws CertificateConsistencyException If the certificate is not trusted.
    * @since 0.1.0
    */
-  CalypsoCertificateStore addPcaPublicKey(byte[] pcaPublicKeyReference, byte[] pcaPublicKeyModulus);
+  void addPcaPublicKey(byte[] pcaPublicKeyReference, byte[] pcaPublicKeyModulus);
 
   /**
-   * Adds a Calypso Certificate Authority (CA) certificate to the store.
+   * Adds a Calypso Certificate Authority (CA) certificate to the store and returns its public key
+   * reference.
    *
    * <p>This method adds the provided certificate to the store. The certificate must be valid
    * (signed by an already referenced authority) and issued by a trusted authority previously
@@ -84,11 +84,12 @@ public interface CalypsoCertificateStore {
    * validating other certificates within the infrastructure.
    *
    * @param caCertificate A 384-byte byte array containing the Calypso CA certificate to add.
-   * @return The current instance.
+   * @return The public key reference of the added certificate.
    * @throws IllegalArgumentException If the certificate is null or its format is unknown.
-   * @throws IllegalStateException If the reference to the public key already in the store.
+   * @throws IllegalStateException If the reference to the public key already in the store or the
+   *     parent certificate was not found.
    * @throws CertificateConsistencyException If the certificate is not trusted.
    * @since 0.1.0
    */
-  CalypsoCertificateStore addCalypsoCaCertificate(byte[] caCertificate);
+  byte[] addCalypsoCaCertificate(byte[] caCertificate);
 }
