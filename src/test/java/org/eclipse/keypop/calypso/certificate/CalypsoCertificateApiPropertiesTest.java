@@ -1,12 +1,14 @@
-/* ******************************************************************************
+/* **************************************************************************************
  * Copyright (c) 2024 Calypso Networks Association https://calypsonet.org/
  *
- * This program and the accompanying materials are made available under the
- * terms of the MIT License which is available at
- * https://opensource.org/licenses/MIT.
+ * See the NOTICE file(s) distributed with this work for additional information
+ * regarding copyright ownership.
+ *
+ * This program and the accompanying materials are made available under the terms of the
+ * MIT License which is available at https://opensource.org/licenses/MIT
  *
  * SPDX-License-Identifier: MIT
- ****************************************************************************** */
+ ************************************************************************************** */
 package org.eclipse.keypop.calypso.certificate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,14 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class CalypsoCertificateApiPropertiesTest {
 
   private static String libVersion;
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() throws Exception {
     InputStream inputStream = new FileInputStream("gradle.properties");
     try {
