@@ -13,9 +13,9 @@ on the Keypop website [keypop.org](https://keypop.org/).
 
 ## API documentation
 
-API Javadoc is available [here](https://eclipse-keypop.github.io/keypop-calypso-certificate-java-api).
+API Javadoc is available [here](https://docs.keypop.org/keypop-calypso-certificate-java-api).
 
-API documentation and class diagram is available
+UML class diagram is available
 [here](https://terminal-api.calypsonet.org/apis/calypsonet-terminal-calypso-certificate-api/).
 
 ## About the source code
